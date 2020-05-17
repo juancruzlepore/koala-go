@@ -2,8 +2,8 @@ package main
 
 import (
 	. "database/sql"
+	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin/json"
 	"log"
 	"strings"
 	"time"
@@ -14,6 +14,10 @@ type Movie struct {
 	AddedBy      string    `json:"addedBy"`
 	Name         string    `json:"name"`
 	Seen         bool      `json:"seen"`
+}
+
+type MovieList struct {
+	Movies []Movie `json:"movies"`
 }
 
 func connect() *DB {
@@ -73,7 +77,9 @@ func getMovies(db *DB) string {
 			movies = append(movies, newMovie)
 		}
 	}
-	moviesJson, err := json.Marshal(movies)
+	var movieList MovieList
+	movieList.Movies = movies
+	moviesJson, err := json.Marshal(movieList)
 	if err != nil {
 		log.Fatal(err)
 		return ""

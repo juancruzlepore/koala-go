@@ -1,17 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-
 	_ "github.com/lib/pq"
-
+	"time"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	_ "github.com/heroku/x/hmetrics/onload"
-	"time"
 )
 
 func main() {
