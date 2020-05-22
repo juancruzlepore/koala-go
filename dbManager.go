@@ -95,7 +95,9 @@ func addMovie(db *DB, movie Movie) bool {
 	if rows.Next() {
 		return false
 	}
-	_, err = db.Exec("insert into movies values (current_timestamp, '$1', $2, false);", movie.AddedBy, movieName)
+
+	_, err = db.Exec(fmt.Sprintf("insert into movies values (current_timestamp, '%s', '%s', false);", movie.AddedBy, movieName))
+
 	if err != nil {
 		log.Fatal(err)
 		return false
