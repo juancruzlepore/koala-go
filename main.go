@@ -35,7 +35,7 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
-			return true //origin == "https://github.com"
+			return true
 		},
 		MaxAge: 12 * time.Hour,
 	}
@@ -64,6 +64,9 @@ func main() {
 		var newMovie Movie
         if c.BindJSON(&newMovie) == nil {
 			newMovie.CreationDate = time.Now()
+			if newMovie.Rating == 0.0 {
+				newMovie.Rating = -1
+			}
 			if addMovie(dbInstance, newMovie) {
 				c.Status(http.StatusOK)
 			} else {

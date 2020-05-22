@@ -14,6 +14,7 @@ type Movie struct {
 	AddedBy      string    `json:"addedBy"`
 	Name         string    `json:"name"`
 	Seen         bool      `json:"seen"`
+	Rating       float32   `json:"rating"`
 }
 
 type MovieList struct {
@@ -93,10 +94,17 @@ func addMovie(db *DB, movie Movie) bool {
 	rows, err := db.Query(fmt.Sprintf("SELECT * FROM movies where name='%s'", movieName))
 	defer rows.Close()
 	if rows.Next() {
-		return false
+		_, err = db.Exec(
+			fmt.Sprintf("update movies set added_by = '%s', seen = %t, rating = %f where name = '%s';",
+				movie.AddedBy, movie.Seen, movie.Rating, movieName))
+		if err != nil {
+			log.Fatal(err)
+			return false
+		}
+		return true
 	}
 
-	_, err = db.Exec(fmt.Sprintf("insert into movies values (current_timestamp, '%s', '%s', false);", movie.AddedBy, movieName))
+	_, err = db.Exec(fmt.Sprintf("insert into movies values (current_timestamp, '%s', '%s', false, -1);", movie.AddedBy, movieName))
 
 	if err != nil {
 		log.Fatal(err)
