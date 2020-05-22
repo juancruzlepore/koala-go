@@ -61,12 +61,17 @@ func main() {
 	})
 
 	router.POST("/movies/add", func(c *gin.Context) {
-		movieName := c.PostForm("name")
-		if addMovie(dbInstance, movieName) {
-			c.Status(http.StatusOK)
-		} else {
-			c.Status(http.StatusConflict)
-		}
+		var newMovie Movie
+        if c.BindJSON(&newMovie) == nil {
+			newMovie.CreationDate = time.Now()
+			if addMovie(dbInstance, newMovie) {
+				c.Status(http.StatusOK)
+			} else {
+				c.Status(http.StatusConflict)
+			}
+        } else {
+			c.Status(http.StatusBadRequest)
+		}		
 	})
 
 	router.OPTIONS("/dates/add")

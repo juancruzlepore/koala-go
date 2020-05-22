@@ -88,14 +88,14 @@ func getMovies(db *DB) string {
 	return string(moviesJson[:])
 }
 
-func addMovie(db *DB, movieName string) bool {
-	movieName = strings.Replace(movieName, "'", "\\'", -1)
+func addMovie(db *DB, movie Movie) bool {
+	movieName := strings.Replace(movie.Name, "'", "\\'", -1)
 	rows, err := db.Query(fmt.Sprintf("SELECT * FROM movies where name='%s'", movieName))
 	defer rows.Close()
 	if rows.Next() {
 		return false
 	}
-	_, err = db.Exec("insert into movies values (current_timestamp, 'Anne', $1, false);", movieName)
+	_, err = db.Exec("insert into movies values (current_timestamp, '$1', $2, false);", movie.AddedBy, movieName)
 	if err != nil {
 		log.Fatal(err)
 		return false
