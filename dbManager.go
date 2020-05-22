@@ -72,7 +72,7 @@ func getMovies(db *DB) string {
 	var movies []Movie
 	for rows.Next() {
 		newMovie := Movie{}
-		if err := rows.Scan(&newMovie.CreationDate, &newMovie.AddedBy, &newMovie.Name, &newMovie.Seen); err != nil {
+		if err := rows.Scan(&newMovie.CreationDate, &newMovie.AddedBy, &newMovie.Name, &newMovie.Seen, &newMovie.Rating); err != nil {
 			log.Fatal(err)
 		} else {
 			movies = append(movies, newMovie)
