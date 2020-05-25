@@ -4,10 +4,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	_ "github.com/lib/pq"
 	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -62,7 +63,7 @@ func main() {
 
 	router.POST("/movies/add", func(c *gin.Context) {
 		var newMovie Movie
-        if c.BindJSON(&newMovie) == nil {
+		if c.BindJSON(&newMovie) == nil {
 			newMovie.CreationDate = time.Now()
 			if newMovie.Rating == 0.0 {
 				newMovie.Rating = -1
@@ -72,9 +73,22 @@ func main() {
 			} else {
 				c.Status(http.StatusConflict)
 			}
-        } else {
+		} else {
 			c.Status(http.StatusBadRequest)
-		}		
+		}
+	})
+
+	router.POST("/movies/delete", func(c *gin.Context) {
+		var newMovie Movie
+		if c.BindJSON(&newMovie) == nil {
+			if deleteMovie(dbInstance, newMovie) {
+				c.Status(http.StatusOK)
+			} else {
+				c.Status(http.StatusConflict)
+			}
+		} else {
+			c.Status(http.StatusBadRequest)
+		}
 	})
 
 	router.OPTIONS("/dates/add")
