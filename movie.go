@@ -15,6 +15,7 @@ type Movie struct {
 	Name         string    `json:"name"`
 	Seen         bool      `json:"seen"`
 	Rating       float32   `json:"rating"`
+	Genres       string    `json:"genres"`
 }
 
 type MovieList struct {
@@ -30,7 +31,13 @@ func getMovies(db *DB) string {
 	var movies []Movie
 	for rows.Next() {
 		newMovie := Movie{}
-		if err := rows.Scan(&newMovie.CreationDate, &newMovie.AddedBy, &newMovie.Name, &newMovie.Seen, &newMovie.Rating); err != nil {
+		if err := rows.Scan(
+			&newMovie.CreationDate,
+			&newMovie.AddedBy,
+			&newMovie.Name,
+			&newMovie.Seen,
+			&newMovie.Rating,
+			&newMovie.Genres); err != nil {
 			log.Fatal(err)
 		} else {
 			movies = append(movies, newMovie)
@@ -53,8 +60,8 @@ func addMovie(db *DB, movie Movie) bool {
 	defer rows.Close()
 	if rows.Next() {
 		_, err = db.Exec(
-			fmt.Sprintf("UPDATE movies SET added_by = '%s', seen = %t, rating = %f where name = '%s';",
-				movie.AddedBy, movie.Seen, movie.Rating, movieName))
+			fmt.Sprintf("UPDATE movies SET added_by = '%s', seen = %t, rating = %f, genres = %s where name = '%s';",
+				movie.AddedBy, movie.Seen, movie.Rating, movie.Genres, movieName))
 		if err != nil {
 			log.Fatal(err)
 			return false
@@ -62,7 +69,7 @@ func addMovie(db *DB, movie Movie) bool {
 		return true
 	}
 
-	_, err = db.Exec(fmt.Sprintf("INSERT INTO movies VALUES (current_timestamp, '%s', '%s', false, -1);", movie.AddedBy, movieName))
+	_, err = db.Exec(fmt.Sprintf("INSERT INTO movies VALUES (current_timestamp, '%s', '%s', false, -1, '');", movie.AddedBy, movieName))
 
 	if err != nil {
 		log.Fatal(err)
