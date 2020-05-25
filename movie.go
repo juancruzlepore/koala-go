@@ -60,7 +60,7 @@ func addMovie(db *DB, movie Movie) bool {
 	defer rows.Close()
 	if rows.Next() {
 		_, err = db.Exec(
-			fmt.Sprintf("UPDATE movies SET added_by = '%s', seen = %t, rating = %f, genres = %s where name = '%s';",
+			fmt.Sprintf("UPDATE movies SET added_by = '%s', seen = %t, rating = %f, genres = '%s' where name = '%s';",
 				movie.AddedBy, movie.Seen, movie.Rating, movie.Genres, movieName))
 		if err != nil {
 			log.Fatal(err)
